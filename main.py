@@ -89,7 +89,7 @@ async def handle_albums(message: Message, album: List[Message]):
     return await bot.send_media_group(CHAT_ID_TO_SEND, media=group_elements)
 
 
-@dp.message(F.chat.type.in_({"private", "sender"}), F.chat_type.in_({'pinned_message'}))
+@dp.message(F.chat.type.in_({"private"}), ~F.content_type.in_({'pinned_message'}))
 async def handle_text(message: Message):
     await message.reply('Отправил, ожидайте')
     return await message.forward(CHAT_ID_TO_SEND)
