@@ -50,14 +50,15 @@ class MediaGroupMiddleware(BaseMiddleware):
 async def cmd_start(message: Message):
     pin = await message.answer('‼️Отправляйте сюда свое тз в строго следующем формате: \n\n'
                                '<b>Желаемый Дизайнер (или -): \n'
-                               'Количество: \n'
+                               'Количество крео: \n'
+                               'Формат (Фото/Видео/Другое):  \n'
                                'Гео, язык: \n'
                                'Направление:  \n'
-                               'Фото/Видео/Другое: \n'
-                               'Подходы (если есть примеры, прикрепить): \n'
-                               'Подробное описание задачи:\n'
-                               'Банку прикрепить (.png), иначе указать "Без банки": </b> \n\n'
-                               'По желанию дополнительно можно прилагать ссыки на адхерт, проклу, ПП')
+                               'Вложения (примеры, банка): \n'
+                               'Подробное описание задачи: </b>\n\n'
+                               ' При необходимости банку прикреплять в формате <b>(.png)</b> без сжатия, '
+                               'если не нужно то указать "Без банки" \n'
+                               'По желанию дополнительно можно прилагать ссылки на адхерт, проклу, ПП')
     await bot.unpin_all_chat_messages(chat_id=message.chat.id)
     await bot.pin_chat_message(chat_id=message.chat.id, message_id=pin.message_id)
     return True
@@ -88,7 +89,7 @@ async def handle_albums(message: Message, album: List[Message]):
     return await bot.send_media_group(CHAT_ID_TO_SEND, media=group_elements)
 
 
-@dp.message(~F.content_type.in_({'pinned_message', 'new_chat_members', 'left_chat_member'}))
+@dp.message(F.chat.type.in_({"private", "sender"}), F.chat_type.in_({'pinned_message'}))
 async def handle_text(message: Message):
     await message.reply('Отправил, ожидайте')
     return await message.forward(CHAT_ID_TO_SEND)
