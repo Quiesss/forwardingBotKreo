@@ -96,5 +96,6 @@ async def handle_text(message: Message):
 
 
 if __name__ == "__main__":
+
     dp.message.middleware(MediaGroupMiddleware())
-    dp.run_polling(bot, allowed_updates=dp.resolve_used_update_types())
+    dp.run_polling(bot, allowed_updates=dp.resolve_used_update_types(), skip_updates=True)
