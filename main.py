@@ -1,8 +1,10 @@
 import asyncio
+from pprint import pprint
 from typing import Any, Awaitable, Callable, Dict, List, Union
 
-from aiogram import BaseMiddleware, Bot, Dispatcher, F
+from aiogram import BaseMiddleware, Bot, Dispatcher, F, filters
 from aiogram.filters import Command
+
 from aiogram.types import (
     InputMediaAudio,
     InputMediaDocument,
@@ -46,6 +48,25 @@ class MediaGroupMiddleware(BaseMiddleware):
         return await handler(event, data)
 
 
+@dp.message(F.reply_to_message)
+async def test(message: Message):
+    pprint(message)
+    if message.reply_to_message:
+        to_user = message.reply_to_message.forward_from.id if message.reply_to_message.forward_from else \
+        message.reply_to_message.text.split('|')[1].strip()
+        if message.text == 'я':
+            await bot.send_message(
+                to_user,
+                f'Ваше тз принял в работу @{message.from_user.username}'
+            )
+        else:
+            await bot.send_message(
+                to_user,
+                message.text
+            )
+    return
+
+
 @dp.message(Command(commands=['start']))
 async def cmd_start(message: Message):
     pin = await message.answer('‼️Отправляйте сюда свое тз в строго следующем формате: \n\n'
@@ -85,7 +106,9 @@ async def handle_albums(message: Message, album: List[Message]):
         group_elements.append(input_media)
     username = message.from_user.username if message.from_user.username else 'unknown'
     await message.reply('Отправил, ожидайте')
-    await bot.send_message(CHAT_ID_TO_SEND, text=f'Сообщение от @{username}', parse_mode=None)
+    await bot.send_message(
+        CHAT_ID_TO_SEND,
+        text=f'Сообщение от @{username} ({message.from_user.full_name}) | {message.from_user.id}', parse_mode=None)
     return await bot.send_media_group(CHAT_ID_TO_SEND, media=group_elements)
 
 
