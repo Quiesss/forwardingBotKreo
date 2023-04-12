@@ -57,7 +57,7 @@ async def from_chat_to_user(message: Message):
             to_user = message.reply_to_message.text.split('|')[1].strip()
         else:
             to_user = CHAT_ID_TO_SEND
-        if message.text == 'я':
+        if message.text in ['я', 'Я']:
             await bot.send_message(
                 to_user,
                 f'Ваше тз принял в работу @{message.from_user.username}'
