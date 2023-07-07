@@ -56,7 +56,8 @@ async def from_chat_to_user(message: Message):
         elif '|' in message.reply_to_message.text:
             to_user = message.reply_to_message.text.split('|')[1].strip()
         else:
-            to_user = CHAT_ID_TO_SEND
+            return message.answer('Не могу отправить пользователю личное сообщение. Либо он скрыт,'
+                                  ' либо вы ответили не на то сообщение')
         if message.text in ['я', 'Я']:
             await message.delete()
             await bot.send_message(
