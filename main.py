@@ -56,8 +56,8 @@ async def from_chat_to_user(message: Message):
         elif '|' in message.reply_to_message.text:
             to_user = message.reply_to_message.text.split('|')[1].strip()
         else:
-            return message.answer('Не могу отправить пользователю личное сообщение. Либо он скрыт,'
-                                  ' либо вы ответили не на то сообщение')
+            return await message.answer('Не могу отправить пользователю личное сообщение. Либо он скрыт,'
+                                        ' либо вы ответили не на то сообщение')
         if message.text in ['я', 'Я']:
             await message.delete()
             await bot.send_message(
@@ -123,6 +123,5 @@ async def handle_text(message: Message):
 
 
 if __name__ == "__main__":
-
     dp.message.middleware(MediaGroupMiddleware())
     dp.run_polling(bot, allowed_updates=dp.resolve_used_update_types(), skip_updates=True)
