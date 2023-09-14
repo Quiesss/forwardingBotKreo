@@ -51,9 +51,9 @@ class MediaGroupMiddleware(BaseMiddleware):
 @dp.message(F.reply_to_message & ~F.chat.type.in_({"private"}))
 async def from_chat_to_user(message: Message):
     if message.reply_to_message:
-        if message.reply_to_message.forward_from:
+        if message.reply_to_message.forward_from is not None:
             to_user = message.reply_to_message.forward_from.id
-        elif '|' in message.reply_to_message.text:
+        elif message.reply_to_message.text and '|' in message.reply_to_message.text:
             to_user = message.reply_to_message.text.split('|')[1].strip()
         else:
             return await message.answer('Не могу отправить пользователю личное сообщение. Либо он скрыт,'
