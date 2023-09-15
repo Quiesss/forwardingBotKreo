@@ -1,8 +1,7 @@
 import asyncio
-from pprint import pprint
 from typing import Any, Awaitable, Callable, Dict, List, Union
 
-from aiogram import BaseMiddleware, Bot, Dispatcher, F, filters
+from aiogram import BaseMiddleware, Bot, Dispatcher, F
 from aiogram.filters import Command
 
 from aiogram.types import (
@@ -73,18 +72,20 @@ async def from_chat_to_user(message: Message):
 
 @dp.message(Command(commands=['start']))
 async def cmd_start(message: Message):
-    pin = await message.answer('‼️Отправляйте сюда свое тз в строго следующем формате: \n\n'
-                               '<b>Желаемый Дизайнер (или -): \n'
-                               'Количество крео: \n'
-                               'Формат (Фото/Видео/Другое):  \n'
-                               'Гео, язык: \n'
-                               'Направление:  \n'
-                               'Отправлять по готовности (да/нет): \n'
-                               'Вложения (примеры, банка): \n'
-                               'Подробное описание задачи: </b>\n\n'
-                               'При необходимости банку прикреплять в формате <b>(.png)</b> без сжатия, '
-                               'если не нужно то указать "Без банки" \n'
-                               'По желанию дополнительно можно прилагать ссылки на адхерт, проклу, ПП')
+    pin = await message.answer_photo(
+        photo='AgACAgIAAxkBAAIKaGUEG2LTYPsvZEZHaC1EghvnYT0tAAK9zjEbEl8gSCGHXFstnl9-AQADAgADcwADMAQ',
+        caption='‼️Отправляйте сюда свое тз в строго следующем формате: \n\n'
+                '<b>Желаемый Дизайнер (или -): \n'
+                'Количество крео: \n'
+                'Формат (Фото/Видео/Другое):  \n'
+                'Гео, язык: \n'
+                'Направление:  \n'
+                'Отправлять по готовности (да/нет): \n'
+                'Вложения (примеры, банка): \n'
+                'Подробное описание задачи: </b>\n\n'
+                'При необходимости банку прикреплять в формате <b>(.png)</b> без сжатия, '
+                'если не нужно то указать "Без банки" \n'
+                'По желанию дополнительно можно прилагать ссылки на адхерт, проклу, ПП')
     await bot.unpin_all_chat_messages(chat_id=message.chat.id)
     await bot.pin_chat_message(chat_id=message.chat.id, message_id=pin.message_id)
     return True
