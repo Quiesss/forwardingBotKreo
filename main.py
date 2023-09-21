@@ -48,11 +48,6 @@ class MediaGroupMiddleware(BaseMiddleware):
         return await handler(event, data)
 
 
-@dp.message(F.photo)
-async def get_img(message: Message):
-    await message.answer(message.photo[0].file_id)
-
-
 @dp.message(F.reply_to_message & ~F.chat.type.in_({"private"}))
 async def from_chat_to_user(message: Message):
     if message.reply_to_message:
