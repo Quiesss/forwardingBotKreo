@@ -2,7 +2,8 @@ import asyncio
 from typing import Any, Awaitable, Callable, Dict, List, Union
 
 from aiogram import BaseMiddleware, Bot, Dispatcher, F
-from aiogram.filters import Command
+from aiogram.exceptions import TelegramBadRequest
+from aiogram.filters import Command, CommandObject
 
 from aiogram.types import (
     InputMediaAudio,
@@ -47,6 +48,11 @@ class MediaGroupMiddleware(BaseMiddleware):
         return await handler(event, data)
 
 
+@dp.message(F.photo)
+async def get_img(message: Message):
+    await message.answer(message.photo[0].file_id)
+
+
 @dp.message(F.reply_to_message & ~F.chat.type.in_({"private"}))
 async def from_chat_to_user(message: Message):
     if message.reply_to_message:
@@ -70,10 +76,72 @@ async def from_chat_to_user(message: Message):
             )
 
 
+@dp.message(Command(commands=['mailing']))
+async def mass_mailing(message: Message, command: CommandObject):
+    mailing_msg = command.args
+    with open('users.txt', 'r') as file:
+        count = 0
+        for user in file:
+            user = user.split('|')
+            if len(user) < 2:
+                continue
+            try:
+                await bot.send_message(user[0].strip(), mailing_msg)
+                count += 1
+            except TelegramBadRequest:
+                continue
+        return await message.answer('Отправил сообщение ' + str(count) + ' пользователям')
+
+
+@dp.message(Command(commands=['users']))
+async def mass_mailing(message: Message):
+    with open('users.txt', 'r') as file:
+        users = file.readlines()
+        msg = ''
+        if len(users) < 1:
+            return await message.answer('Кажется, пользователей пока нет')
+        for user in users:
+            msg += user.split('|')[0] + ' - ' + f'<a href="t.me/{user.split("|")[1]}">{user.split("|")[1]}</a>'
+        return await message.answer(msg, disable_web_page_preview=True)
+
+
+@dp.message(Command(commands=['del']))
+async def mass_mailing(message: Message, command: CommandObject):
+    user_to_delete = command.args
+    find = False
+    with open('users.txt', 'r') as file:
+        users = file.readlines()
+    with open('users.txt', 'w') as file:
+        for user in users:
+            user_id = user.split('|')[0].strip()
+            if user_to_delete == user_id:
+                find = user
+                continue
+            file.write(user)
+    if find:
+        return await message.answer(f'Удалил пользователя: <a href="t.me/{user.split("|")[1]}">@{user.split("|")[1]}</a>')
+    else:
+        return await message.answer('Не нашел такого пользователя')
+
+
 @dp.message(Command(commands=['start']))
 async def cmd_start(message: Message):
+    find = False
+    with open('users.txt', 'r+') as file:
+        users = file.readlines()
+        for user in users:
+            user_id = user.split('|')
+            if len(user_id) < 2:
+                continue
+            if str(user_id[0].strip()) == str(message.from_user.id):
+                find = True
+                break
+    if not find:
+        with open('users.txt', 'a') as file:
+            file.write(str(message.from_user.id) + '|' + message.from_user.username + '\n')
+
     pin = await message.answer_photo(
-        photo='AgACAgIAAxkBAAIKaGUEG2LTYPsvZEZHaC1EghvnYT0tAAK9zjEbEl8gSCGHXFstnl9-AQADAgADcwADMAQ',
+        photo='AgACAgIAAxkBAAIsm2UEIGXXEjt9SgUpWVreKE4H_62uAAK9zjEbEl8gSH2bEosp9PMXAQADAgADcwADMAQ',
         caption='‼️Отправляйте сюда свое тз в строго следующем формате: \n\n'
                 '<b>Желаемый Дизайнер (или -): \n'
                 'Количество крео: \n'
