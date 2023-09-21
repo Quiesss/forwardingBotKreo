@@ -138,6 +138,11 @@ async def cmd_start(message: Message):
                 break
     if not find:
         with open('users.txt', 'a') as file:
+            await bot.send_message(
+                CHAT_ID_TO_SEND,
+                f'<a href="t.me/{message.from_user.username}">{message.from_user.username}</a> подписался на рассылку',
+                disable_web_page_preview=True
+            )
             file.write(str(message.from_user.id) + '|' + message.from_user.username + '\n')
 
     pin = await message.answer_photo(
