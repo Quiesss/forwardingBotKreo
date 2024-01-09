@@ -146,7 +146,7 @@ async def cmd_start(message: Message):
             file.write(str(message.from_user.id) + '|' + message.from_user.username + '\n')
 
     pin = await message.answer_photo(
-        photo='AgACAgIAAxkBAAIsm2UEIGXXEjt9SgUpWVreKE4H_62uAAK9zjEbEl8gSH2bEosp9PMXAQADAgADcwADMAQ',
+        photo='AgACAgIAAxkBAAJEQGWc8iKWwxhhKTl1j7t63EZO2ShlAAIw2TEbxFjoSPy-qJX6WgbeAQADAgADcwADNAQ',
         caption='‼️Отправляйте сюда свое тз в строго следующем формате: \n\n'
                 '<b>Желаемый Дизайнер (или -): \n'
                 'Количество крео: \n'
