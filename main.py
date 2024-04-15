@@ -79,6 +79,7 @@ async def from_chat_to_user(message: Message):
 @dp.message(Command(commands=['mailing']))
 async def mass_mailing(message: Message, command: CommandObject):
     mailing_msg = command.args
+    print(message.photo)
     with open('users.txt', 'r') as file:
         count = 0
         for user in file:
@@ -86,7 +87,10 @@ async def mass_mailing(message: Message, command: CommandObject):
             if len(user) < 2:
                 continue
             try:
-                await bot.send_message(user[0].strip(), mailing_msg)
+                if message.photo:
+                    await bot.send_photo(user[0], message.photo[-1].file_id)
+                if mailing_msg:
+                    await bot.send_message(user[0].strip(), mailing_msg)
                 count += 1
             except TelegramBadRequest:
                 continue
@@ -119,7 +123,7 @@ async def mass_mailing(message: Message, command: CommandObject):
                 continue
             file.write(user)
     if find:
-        return await message.answer(f'Удалил пользователя: <a href="t.me/{user.split("|")[1]}">@{user.split("|")[1]}</a>')
+        return await message.answer(f'Удалил пользователя: <a href="t.me/{find.split("|")[1]}">@{find.split("|")[1]}</a>')
     else:
         return await message.answer('Не нашел такого пользователя')
 
