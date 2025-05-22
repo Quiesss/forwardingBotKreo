@@ -4,7 +4,6 @@ from typing import Any, Awaitable, Callable, Dict, List, Union
 from aiogram import BaseMiddleware, Bot, Dispatcher, F
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import Command, CommandObject
-from aiogram.client.default import DefaultBotProperties
 
 from aiogram.types import (
     InputMediaAudio,
@@ -19,7 +18,7 @@ from conf import API_KEY, CHANNEL
 DEFAULT_DELAY = 0.6
 CHAT_ID_TO_SEND = CHANNEL
 
-bot = Bot(API_KEY, default=DefaultBotProperties(parse_mode='HTML'))
+bot = Bot(API_KEY, parse_mode='HTML')
 dp = Dispatcher()
 
 
